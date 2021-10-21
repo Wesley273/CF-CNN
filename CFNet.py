@@ -8,14 +8,14 @@ class CFNet(nn.Module):
                                    nn.BatchNorm2d(36), nn.PReLU())
         self.conv2 = nn.Sequential(nn.Conv2d(36, 36, 3, padding=1),
                                    nn.BatchNorm2d(36), nn.PReLU())
-        self.pool1 = nn.Sequential(nn.MaxPool2d(2), nn.BatchNorm2d(36),
-                                   nn.PReLU())
+        self.pool1 = nn.Sequential(nn.MaxPool2d(2, ceil_mode=True),
+                                   nn.BatchNorm2d(36), nn.PReLU())
         self.conv3 = nn.Sequential(nn.Conv2d(36, 48, 3, padding=1),
                                    nn.BatchNorm2d(48), nn.PReLU())
         self.conv4 = nn.Sequential(nn.Conv2d(48, 48, 3, padding=1),
                                    nn.BatchNorm2d(48), nn.PReLU())
-        self.pool2 = nn.Sequential(nn.MaxPool2d(2), nn.BatchNorm2d(48),
-                                   nn.PReLU())
+        self.pool2 = nn.Sequential(nn.MaxPool2d(2, ceil_mode=True),
+                                   nn.BatchNorm2d(48), nn.PReLU())
         self.conv5 = nn.Sequential(nn.Conv2d(48, 68, 3, padding=1),
                                    nn.BatchNorm2d(68), nn.PReLU())
         self.conv6 = nn.Sequential(nn.Conv2d(68, 68, 3, padding=1),
@@ -31,7 +31,8 @@ class CFNet(nn.Module):
         c4 = self.conv4(c3)
         c5 = self.conv5(self.pool2(c4))
         c6 = self.conv6(c5)
-        f7 = self.fc7(c6)
+        #view()函数用于将tensor除了Batch维，其他维压缩在一起
+        f7 = self.fc7(c6.view(c6.size(0), -1))
         f8 = self.fc8(f7)
         out = nn.Sigmoid()(f8)
         return out
