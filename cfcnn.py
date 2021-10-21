@@ -1,13 +1,14 @@
 import torch.nn as nn
 
 
-class CFNet(nn.Module):
+class Net(nn.Module):
     def __init__(self, in_ch, out_ch):
-        super(CFNet, self).__init__()
+        super(Net, self).__init__()
         self.conv1 = nn.Sequential(nn.Conv2d(in_ch, 36, 3, padding=1),
                                    nn.BatchNorm2d(36), nn.PReLU())
         self.conv2 = nn.Sequential(nn.Conv2d(36, 36, 3, padding=1),
                                    nn.BatchNorm2d(36), nn.PReLU())
+        # 注意ceil_mode的设置
         self.pool1 = nn.Sequential(nn.MaxPool2d(2, ceil_mode=True),
                                    nn.BatchNorm2d(36), nn.PReLU())
         self.conv3 = nn.Sequential(nn.Conv2d(36, 48, 3, padding=1),
@@ -31,7 +32,7 @@ class CFNet(nn.Module):
         c4 = self.conv4(c3)
         c5 = self.conv5(self.pool2(c4))
         c6 = self.conv6(c5)
-        #view()函数用于将tensor除了Batch维，其他维压缩在一起
+        # view()函数用于将tensor除了Batch维，其他维压缩在一起
         f7 = self.fc7(c6.view(c6.size(0), -1))
         f8 = self.fc8(f7)
         out = nn.Sigmoid()(f8)

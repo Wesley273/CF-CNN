@@ -1,4 +1,4 @@
-from CFNet import CFNet
+from cfcnn import Net
 import torch
 import PIL.Image as Image
 from torchvision.transforms import transforms
@@ -10,7 +10,7 @@ x_transform = transforms.Compose([
     transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
 ])
 if __name__ == '__main__':
-    model = CFNet(3, 1)
+    model = Net(3, 1)
     test = Image.open(r"test.jpg")
     test = x_transform(test)
     test = test.unsqueeze(0)
