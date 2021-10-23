@@ -11,6 +11,7 @@ data = pydicom.read_file(r".\example\{}.dcm".format(slices))
 mask_path = r".\example\LAC_1.nrrd"
 mask, mask_options = nrrd.read(mask_path)
 print(data.ImageOrientationPatient)
+
 #显示CT图片
 plt.imshow(data.pixel_array, "gray")
 plt.show()

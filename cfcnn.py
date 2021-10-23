@@ -4,25 +4,16 @@ import torch.nn as nn
 class Net(nn.Module):
     def __init__(self, in_ch, out_ch):
         super(Net, self).__init__()
-        self.conv1 = nn.Sequential(nn.Conv2d(in_ch, 36, 3, padding=1),
-                                   nn.BatchNorm2d(36), nn.PReLU())
-        self.conv2 = nn.Sequential(nn.Conv2d(36, 36, 3, padding=1),
-                                   nn.BatchNorm2d(36), nn.PReLU())
+        self.conv1 = nn.Sequential(nn.Conv2d(in_ch, 36, 3, padding=1), nn.BatchNorm2d(36), nn.PReLU())
+        self.conv2 = nn.Sequential(nn.Conv2d(36, 36, 3, padding=1), nn.BatchNorm2d(36), nn.PReLU())
         # 注意ceil_mode的设置
-        self.pool1 = nn.Sequential(nn.MaxPool2d(2, ceil_mode=True),
-                                   nn.BatchNorm2d(36), nn.PReLU())
-        self.conv3 = nn.Sequential(nn.Conv2d(36, 48, 3, padding=1),
-                                   nn.BatchNorm2d(48), nn.PReLU())
-        self.conv4 = nn.Sequential(nn.Conv2d(48, 48, 3, padding=1),
-                                   nn.BatchNorm2d(48), nn.PReLU())
-        self.pool2 = nn.Sequential(nn.MaxPool2d(2, ceil_mode=True),
-                                   nn.BatchNorm2d(48), nn.PReLU())
-        self.conv5 = nn.Sequential(nn.Conv2d(48, 68, 3, padding=1),
-                                   nn.BatchNorm2d(68), nn.PReLU())
-        self.conv6 = nn.Sequential(nn.Conv2d(68, 68, 3, padding=1),
-                                   nn.BatchNorm2d(68), nn.PReLU())
-        self.fc7 = nn.Sequential(nn.Linear(9 * 9 * 68, 300),
-                                 nn.BatchNorm1d(300), nn.PReLU())
+        self.pool1 = nn.Sequential(nn.MaxPool2d(2, ceil_mode=True), nn.BatchNorm2d(36), nn.PReLU())
+        self.conv3 = nn.Sequential(nn.Conv2d(36, 48, 3, padding=1), nn.BatchNorm2d(48), nn.PReLU())
+        self.conv4 = nn.Sequential(nn.Conv2d(48, 48, 3, padding=1), nn.BatchNorm2d(48), nn.PReLU())
+        self.pool2 = nn.Sequential(nn.MaxPool2d(2, ceil_mode=True), nn.BatchNorm2d(48), nn.PReLU())
+        self.conv5 = nn.Sequential(nn.Conv2d(48, 68, 3, padding=1), nn.BatchNorm2d(68), nn.PReLU())
+        self.conv6 = nn.Sequential(nn.Conv2d(68, 68, 3, padding=1), nn.BatchNorm2d(68), nn.PReLU())
+        self.fc7 = nn.Sequential(nn.Linear(9 * 9 * 68, 300), nn.BatchNorm1d(300), nn.PReLU())
         self.fc8 = nn.Sequential(nn.Linear(300, out_ch))
 
     def forward(self, x):
