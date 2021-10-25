@@ -4,11 +4,12 @@ import nrrd
 import numpy as np
 import pandas as pd
 import pydicom
-from matplotlib import pyplot as plt
 from imageio import imwrite
+from matplotlib import pyplot as plt
+from PIL import Image
 
 PATH = "D:\Dataset"
-tables = pd.read_csv(r"nodules\GGN_original.csv")
+tables = pd.read_csv(r"coordinates\GGN_original.csv")
 
 
 def show():
@@ -59,9 +60,11 @@ def save_pictures():
 
         # 裁切35×35及65×65的mask
         mask_crop = nodule_mask[round(y - 17):round(y + 18), round(x - 17):round(x + 18)]
-        imwrite('.\\dataset\\{}.mask.{}.jpg'.format(count, mask_crop.shape[0]), mask_crop)
+        imwrite('.\\dataset\\{}.mask.35.jpg'.format(count), mask_crop)
         mask_crop = nodule_mask[round(y - 32):round(y + 33), round(x - 32):round(x + 33)]
-        imwrite('.\\dataset\\{}.mask.{}.jpg'.format(count, mask_crop.shape[0]), mask_crop)
+        # 下采样到35×35
+        mask_crop = np.array(Image.fromarray(mask_crop).resize((35, 35), resample=0))
+        imwrite('.\\dataset\\{}.mask.65.jpg'.format(count), mask_crop)
 
         # 裁切上下三张CT图
         for i in range(-1, 2):
@@ -72,12 +75,15 @@ def save_pictures():
 
             # 裁切 35×35 CT图
             nodule_crop = ct_image[round(y - 17):round(y + 18), round(x - 17):round(x + 18)]
-            imwrite('.\\dataset\\{}.{}.ct.{}.jpg'.format(count, i+2, nodule_crop.shape[0]), maxmin_normalize(nodule_crop)*255)
+            imwrite('.\\dataset\\{}.{}.ct.35.jpg'.format(count, i+2), maxmin_normalize(nodule_crop)*255)
 
             # 裁切 65×65 CT图
             if i == 0:
                 nodule_crop = ct_image[round(y - 32):round(y + 33), round(x - 32):round(x + 33)]
-                imwrite('.\\dataset\\{}.{}.ct.{}.jpg'.format(count, i+2, nodule_crop.shape[0]), maxmin_normalize(nodule_crop)*255)
+                # 下采样到35×35
+                nodule_crop = np.array(Image.fromarray(nodule_crop).resize((35, 35), resample=0))
+                imwrite('.\\dataset\\{}.{}.ct.65.jpg'.format(count, i+2), maxmin_normalize(nodule_crop)*255)
+
         print("已处理{}个结节".format(count))
         count = count + 1
 
