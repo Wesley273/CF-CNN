@@ -63,7 +63,7 @@ class Net(nn.Module):
         self.fc8 = nn.Sequential(nn.Linear(600, 35*35), nn.BatchNorm1d(35*35), nn.PReLU())
 
     def forward(self, x, y):
-        f7_concat = torch.cat((self.branch_3d(x), self.branch_2d(y)), 0)
-        out = torch.reshape(self.fc8(f7_concat), (-1, -1, 35, 35))
+        f7_concat = torch.cat((self.branch_3d(x), self.branch_2d(y)), 1)
+        out = torch.reshape(self.fc8(f7_concat), (-1, 1, 35, 35))
 
-        return out
+        return nn.Sigmoid()(out)

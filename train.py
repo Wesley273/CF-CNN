@@ -1,9 +1,8 @@
-import PIL.Image as Image
 import torch
 from torch import optim
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
-from dataset import NoduleDataset
+from dataset import GGNDataset
 from cfcnn import Net
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -22,16 +21,23 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
         print('-' * 10)
         dataset_size = len(dataloader.dataset)
         epoch_loss = 0
-        step = 0  # minibatch数
-        for x, y in dataloader:  # 分100次遍历数据集，每次遍历batch_size=4
-            optimizer.zero_grad()  # 每次minibatch都要将梯度(dw,db,...)清零
-            inputs = x.to(device)
-            labels = y.to(device)
-            outputs = model(inputs)  # 前向传播
-            loss = criterion(outputs, labels)  # 计算损失
-            loss.backward()  # 梯度下降,计算出梯度
-            optimizer.step()  # 更新参数一次：所有的优化器Optimizer都实现了step()方法来对所有的参数进行更新
-            epoch_loss += loss.item()  # loss.item()是为了取得一个元素张量的数值
+        step = 0
+        for x, y, mask in dataloader:
+            # 每个bacth都要将梯度(dw,db,...)清零
+            optimizer.zero_grad()
+            inputs_3d = x.to(device)
+            inputs_2d = y.to(device)
+            masks = mask.to(device)
+            # 前向传播
+            outputs = model(inputs_3d, inputs_2d)
+            # 计算损失
+            loss = criterion(outputs, masks)
+            # 梯度下降,计算出梯度
+            loss.backward()
+            # 更新参数一次：所有的优化器Optimizer都实现了step()方法来对所有的参数进行更新
+            optimizer.step()
+            # loss.item()是为了取得一个元素张量的数值
+            epoch_loss += loss.item()
             step += 1
             print("%d/%d,train_loss:%0.3f" %
                   (step, dataset_size // dataloader.batch_size, loss.item()))
@@ -43,14 +49,14 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
 
 if __name__ == '__main__':
     model = Net().to(device)
-    batch_size = 1
+    batch_size = 2
     # 损失函数
     criterion = torch.nn.BCELoss()
     # 梯度下降
     # model.parameters():Returns an iterator over module parameters
     optimizer = optim.Adam(model.parameters())
     # 加载数据集
-    liver_dataset = NoduleDataset("dataset", transform=data_transform, target_transform=data_transform)
+    liver_dataset = GGNDataset("dataset", transform=data_transform)
     dataloader = DataLoader(liver_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
     # 开始训练
     train_model(model, criterion, optimizer, dataloader)
