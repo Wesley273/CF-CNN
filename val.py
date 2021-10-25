@@ -16,7 +16,7 @@ data_transform = transforms.Compose([
 
 if __name__ == '__main__':
     model = Net()
-    model.load_state_dict(torch.load(r"weight\weights_19.pth", map_location='cpu'))
+    model.load_state_dict(torch.load(r"weight\weights_a_19.pth", map_location='cpu'))
     GGN_dataset = GGNDataset("dataset", transform=data_transform)
     dataloaders = DataLoader(GGN_dataset)
     model.eval()
