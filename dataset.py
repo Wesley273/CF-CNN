@@ -1,7 +1,9 @@
-import torch.utils.data as data
 import os
-import torch
+
 import PIL.Image as Image
+import torch
+import torch.utils.data as data
+from torchvision.transforms import transforms
 
 # data.Dataset:
 # 所有子类应该override__len__和__getitem__，前者提供了数据集的大小，后者支持整数索引，范围从0到len(self)
@@ -35,7 +37,7 @@ class GGNDataset(data.Dataset):
         if self.data_transform is not None:
             img_x = torch.cat((self.data_transform(img1), self.data_transform(img2), self.data_transform(img3)), 0)
             img_y = torch.cat((self.data_transform(img2), self.data_transform(img4)), 0)
-            mask = self.data_transform(mask)
+            mask = transforms.ToTensor()(mask)
 
         # 返回的是tensor
         return img_x, img_y, mask

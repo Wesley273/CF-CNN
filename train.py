@@ -2,8 +2,9 @@ import torch
 from torch import optim
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
-from dataset import GGNDataset
+
 from cfcnn import Net
+from dataset import GGNDataset
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 data_transform = transforms.Compose([
@@ -53,7 +54,6 @@ if __name__ == '__main__':
     # 损失函数
     criterion = torch.nn.BCELoss()
     # 梯度下降
-    # model.parameters():Returns an iterator over module parameters
     optimizer = optim.Adam(model.parameters())
     # 加载数据集
     liver_dataset = GGNDataset("dataset", transform=data_transform)
