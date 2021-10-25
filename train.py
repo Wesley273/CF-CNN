@@ -44,7 +44,7 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
                   (step, dataset_size // dataloader.batch_size, loss.item()))
         print("epoch %d loss:%0.3f" % (epoch, epoch_loss))
     # 保存模型参数
-    torch.save(model.state_dict(), '.\\weight\\weights_%d.pth' % epoch)
+    torch.save(model.state_dict(), '.\\weight\\weights_a_%d.pth' % epoch)
     return model
 
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     # 梯度下降
     optimizer = optim.Adam(model.parameters())
     # 加载数据集
-    liver_dataset = GGNDataset("dataset", transform=data_transform)
-    dataloader = DataLoader(liver_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
+    GGN_dataset = GGNDataset("dataset", transform=data_transform)
+    dataloader = DataLoader(GGN_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
     # 开始训练
     train_model(model, criterion, optimizer, dataloader)

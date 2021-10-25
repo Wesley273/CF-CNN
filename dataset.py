@@ -21,7 +21,7 @@ class GGNDataset(data.Dataset):
             img2 = os.path.join(path, '{:.0f}.2.ct.35.jpg'.format(i))
             img3 = os.path.join(path, '{:.0f}.3.ct.35.jpg'.format(i))
             img4 = os.path.join(path, '{:.0f}.2.ct.65.jpg'.format(i))
-            mask = os.path.join(path, '{:.0f}.mask.65.jpg'.format(i))
+            mask = os.path.join(path, '{:.0f}.mask.35.jpg'.format(i))
             imgs.append([img1, img2, img3, img4, mask])
 
         self.imgs = imgs
