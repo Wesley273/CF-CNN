@@ -1,6 +1,5 @@
-from PIL.Image import Image
-import torch
 import matplotlib.pyplot as plt
+import torch
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 
@@ -20,7 +19,7 @@ def show_result(model, dataloader):
         for x, y, _ in dataloader:
             output = model(x, y)
             output = torch.squeeze(output).numpy()
-            plt.imshow(output,'gray')
+            plt.imshow(output, 'gray')
             plt.show()
 
 
