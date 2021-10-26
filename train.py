@@ -40,23 +40,22 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
             # loss.item()是为了取得一个元素张量的数值
             epoch_loss += loss.item()
             step += 1
-            print("%d/%d,train_loss:%0.3f" %
-                  (step, dataset_size // dataloader.batch_size, loss.item()))
+            print("%d/%d,train_loss:%0.3f" % (step, dataset_size // dataloader.batch_size, loss.item()))
         print("epoch %d loss:%0.3f" % (epoch, epoch_loss))
     # 保存模型参数
-    torch.save(model.state_dict(), '.\\weight\\weights_a_%d.pth' % epoch)
+    torch.save(model.state_dict(), r'weight/weights_a_%d.pth' % epoch)
     return model
 
 
 if __name__ == '__main__':
     model = Net().to(device)
-    batch_size = 2
     # 损失函数
     criterion = torch.nn.BCELoss()
     # 梯度下降
     optimizer = optim.Adam(model.parameters())
     # 加载数据集
-    GGN_dataset = GGNDataset("dataset\\train", transform=data_transform)
-    dataloader = DataLoader(GGN_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
+    GGN_dataset = GGNDataset(r"dataset/train", transform=data_transform)
+    # 设置DataLoader
+    dataloader = DataLoader(GGN_dataset, batch_size=8, shuffle=True, num_workers=4)
     # 开始训练
-    train_model(model, criterion, optimizer, dataloader)
+    train_model(model, criterion, optimizer, dataloader, num_epochs=2000)

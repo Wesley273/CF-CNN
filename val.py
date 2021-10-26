@@ -39,8 +39,8 @@ def get_IoU(model, dataloader):
 if __name__ == '__main__':
     # 加载模型
     model = Net()
-    model.load_state_dict(torch.load(r"weight\weights_a_9998.pth", map_location='cpu'))
-    GGN_dataset = GGNDataset("dataset\\test", transform=data_transform)
+    model.load_state_dict(torch.load(r"weight/weights_a_9998.pth", map_location='cpu'))
+    GGN_dataset = GGNDataset(r"dataset/test", transform=data_transform)
     dataloader = DataLoader(GGN_dataset)
     model.eval()
     show_result(model, dataloader)
