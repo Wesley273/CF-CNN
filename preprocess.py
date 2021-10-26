@@ -19,6 +19,12 @@ def maxmin_normalize(x):
     return x
 
 
+def crop(array, x, y, scale):
+    top = round(scale/2)
+    bottom = scale - top
+    return array[round(y - bottom):round(y + top), round(x - bottom):round(x + top)]
+
+
 def show():
     for ct_id, x, y, _, _, _, mask_index, z_trans, _ in tables.iloc:
         # 读入CT源文件及mask
@@ -40,8 +46,8 @@ def show():
         plt.imshow(2000 * nodule_mask + ct_image, "gray")
 
         # 进行裁切
-        mask_crop = nodule_mask[round(y - 17):round(y + 18), round(x - 17):round(x + 18)]
-        nodule_crop = ct_image[round(y - 17):round(y + 18), round(x - 17):round(x + 18)]
+        mask_crop = crop(nodule_mask, x, y, 35)
+        nodule_crop = crop(ct_image, x, y, 35)
 
         # 裁切结果展示
         plt.subplot(2, 3, 4)
@@ -63,9 +69,9 @@ def save_pictures():
         nodule_mask = np.transpose(mask[:, :, z_trans])
 
         # 裁切35×35及65×65的mask
-        mask_crop = nodule_mask[round(y - 17):round(y + 18), round(x - 17):round(x + 18)]
+        mask_crop = crop(nodule_mask, x, y, 35)
         imwrite('dataset//%s//%d.mask.35.jpg' % (types, count), mask_crop)
-        mask_crop = nodule_mask[round(y - 32):round(y + 33), round(x - 32):round(x + 33)]
+        mask_crop = crop(nodule_mask, x, y, 65)
 
         # 下采样到35×35
         mask_crop = np.array(Image.fromarray(mask_crop).resize((35, 35), resample=0))
@@ -79,12 +85,12 @@ def save_pictures():
             ct_image[ct_image < -600] = -600
 
             # 裁切 35×35 CT图
-            nodule_crop = ct_image[round(y - 17):round(y + 18), round(x - 17):round(x + 18)]
+            nodule_crop = crop(ct_image, x, y, 35)
             imwrite('dataset//%s//%d.%d.ct.35.jpg' % (types, count, i+2), maxmin_normalize(nodule_crop)*255)
 
             # 裁切 65×65 CT图
             if i == 0:
-                nodule_crop = ct_image[round(y - 32):round(y + 33), round(x - 32):round(x + 33)]
+                nodule_crop = crop(ct_image, x, y, 65)
                 # 下采样到35×35
                 nodule_crop = np.array(Image.fromarray(nodule_crop).resize((35, 35), resample=0))
                 imwrite('dataset//%s//%d.%d.ct.65.jpg' % (types, count, i+2), maxmin_normalize(nodule_crop)*255)
