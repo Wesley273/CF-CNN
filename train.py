@@ -56,7 +56,7 @@ if __name__ == '__main__':
     # 梯度下降
     optimizer = optim.Adam(model.parameters())
     # 加载数据集
-    GGN_dataset = GGNDataset("dataset", transform=data_transform)
+    GGN_dataset = GGNDataset("dataset\\train", transform=data_transform)
     dataloader = DataLoader(GGN_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
     # 开始训练
     train_model(model, criterion, optimizer, dataloader)
