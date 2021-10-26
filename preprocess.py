@@ -15,7 +15,7 @@ tables = pd.read_csv(r"coordinates\GGN_original.csv")
 def show():
     for ct_id, x, y, z, diam, slice_num, mask_index, z_trans in tables.iloc:
         # 读入CT源文件及mask
-        mask, mask_options = nrrd.read(os.path.join(PATH, ct_id, '{}.nrrd\{}.nrrd'.format(mask_index, mask_index)))
+        mask, _ = nrrd.read(os.path.join(PATH, ct_id, '{}.nrrd\{}.nrrd'.format(mask_index, mask_index)))
         ct_image = pydicom.read_file(os.path.join(PATH, ct_id, '{}.dcm'.format(z_trans + 1))).pixel_array
 
         # CT图像归一化，mask横纵坐标调换
@@ -55,7 +55,7 @@ def save_pictures():
     count = 0
     for ct_id, x, y, z, diam, slice_num, mask_index, z_trans in tables.iloc:
         # 读入mask并预处理
-        mask, mask_options = nrrd.read(os.path.join(PATH, ct_id, '{}.nrrd\{}.nrrd'.format(mask_index, mask_index)))
+        mask, _ = nrrd.read(os.path.join(PATH, ct_id, '{}.nrrd\{}.nrrd'.format(mask_index, mask_index)))
         nodule_mask = np.transpose(mask[:, :, z_trans])
 
         # 裁切35×35及65×65的mask

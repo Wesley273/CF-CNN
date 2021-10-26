@@ -23,11 +23,11 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
         dataset_size = len(dataloader.dataset)
         epoch_loss = 0
         step = 0
-        for x, y, mask in dataloader:
+        for img_3d, img_2d, mask in dataloader:
             # 每个bacth都要将梯度(dw,db,...)清零
             optimizer.zero_grad()
-            inputs_3d = x.to(device)
-            inputs_2d = y.to(device)
+            inputs_3d = img_3d.to(device)
+            inputs_2d = img_2d.to(device)
             masks = mask.to(device)
             # 前向传播
             outputs = model(inputs_3d, inputs_2d)
@@ -43,7 +43,7 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
             print("%d/%d,train_loss:%0.3f" % (step, dataset_size // dataloader.batch_size, loss.item()))
         print("epoch %d loss:%0.3f" % (epoch, epoch_loss))
     # 保存模型参数
-    torch.save(model.state_dict(), r'weight/weights_a_%d.pth' % epoch)
+    torch.save(model.state_dict(), r'weight/weights_%d.pth' % epoch)
     return model
 
 

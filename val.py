@@ -16,17 +16,17 @@ data_transform = transforms.Compose([
 
 def show_result(model, dataloader):
     with torch.no_grad():
-        for x, y, _ in dataloader:
-            output = model(x, y)
+        for img_3d, img_2d, _ in dataloader:
+            output = model(img_3d, img_2d)
             output = torch.squeeze(output).numpy()
             plt.imshow(output, 'gray')
             plt.show()
 
 
 def get_IoU(model, dataloader):
-    for x, y, mask in dataloader:
+    for img_3d, img_2d, mask in dataloader:
         mask = torch.squeeze(mask).numpy()
-        output = model(x, y)
+        output = model(img_3d, img_2d)
         output = torch.squeeze(output).detach().numpy()
         output = output > 0.5
         mask = mask > 0.5
@@ -38,7 +38,7 @@ def get_IoU(model, dataloader):
 if __name__ == '__main__':
     # 加载模型
     model = Net()
-    model.load_state_dict(torch.load(r"weight/weights_a_9998.pth", map_location='cpu'))
+    model.load_state_dict(torch.load(r"weight/weights_a_1999.pth", map_location='cpu'))
     GGN_dataset = GGNDataset(r"dataset/val", transform=data_transform)
     dataloader = DataLoader(GGN_dataset)
     model.eval()
