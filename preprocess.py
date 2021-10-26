@@ -54,7 +54,7 @@ def maxmin_normalize(x):
 def save_pictures():
     count = 0
     for ct_id, x, y, z, diam, slice_num, mask_index, z_trans in tables.iloc:
-        # 读入mask并预处理
+        # 读入mask，横纵坐标调换
         mask, _ = nrrd.read(os.path.join(PATH, ct_id, '{}.nrrd\{}.nrrd'.format(mask_index, mask_index)))
         nodule_mask = np.transpose(mask[:, :, z_trans])
 
@@ -62,14 +62,15 @@ def save_pictures():
         mask_crop = nodule_mask[round(y - 17):round(y + 18), round(x - 17):round(x + 18)]
         imwrite('.\\dataset\\{}.mask.35.jpg'.format(count), mask_crop)
         mask_crop = nodule_mask[round(y - 32):round(y + 33), round(x - 32):round(x + 33)]
+
         # 下采样到35×35
         mask_crop = np.array(Image.fromarray(mask_crop).resize((35, 35), resample=0))
         imwrite('.\\dataset\\{}.mask.65.jpg'.format(count), mask_crop)
 
         # 裁切上下三张CT图
         for i in range(-1, 2):
+            # 读入CT图并归一化
             ct_image = pydicom.read_file(os.path.join(PATH, ct_id, '{}.dcm'.format(z_trans + 1 + i))).pixel_array
-            # CT图像归一化，mask横纵坐标调换
             ct_image[ct_image > 1200] = 1200
             ct_image[ct_image < -600] = -600
 
