@@ -20,8 +20,8 @@ def show_result(model, dataloader):
         for x, y, _ in dataloader:
             output = model(x, y)
             output = torch.squeeze(output).numpy()
-            plt.imshow(output)
-        plt.show()
+            plt.imshow(output,'gray')
+            plt.show()
 
 
 def get_IoU(model, dataloader):
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     # 加载模型
     model = Net()
     model.load_state_dict(torch.load(r"weight/weights_a_9998.pth", map_location='cpu'))
-    GGN_dataset = GGNDataset(r"dataset/test", transform=data_transform)
+    GGN_dataset = GGNDataset(r"dataset/val", transform=data_transform)
     dataloader = DataLoader(GGN_dataset)
     model.eval()
     show_result(model, dataloader)
