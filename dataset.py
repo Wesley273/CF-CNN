@@ -6,7 +6,8 @@ import torch.utils.data as data
 from torchvision.transforms import transforms
 
 # data.Dataset:
-# 所有子类应该override__len__和__getitem__，前者提供了数据集的大小，后者支持整数索引，范围从0到len(self)
+# 所有子类应该重写__len__()和__getitem__()，前者提供了数据集的大小，后者支持整数索引，如：dataset[i]
+# Dataloader将从Dataset中按要求加载数据集
 
 
 class GGNDataset(data.Dataset):

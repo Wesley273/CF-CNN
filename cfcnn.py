@@ -24,8 +24,8 @@ class Branch3D(nn.Module):
         c4 = self.conv4(c3)
         c5 = self.conv5(self.pool2(c4))
         c6 = self.conv6(c5)
-        # view()函数用于将tensor除了Batch维，其他维压缩在一起
-        f7 = self.fc7(c6.view(c6.size(0), -1))
+        # reshape默认为'C'模式，第一维变化最慢
+        f7 = self.fc7(torch.reshape(c6, (c6.size(0), -1)))
 
         return f7
 
@@ -50,7 +50,7 @@ class Branch2D(nn.Module):
         c4 = self.conv4(c3)
         c5 = self.conv5(self.pool2(c4))
         c6 = self.conv6(c5)
-        f7 = self.fc7(c6.view(c6.size(0), -1))
+        f7 = self.fc7(torch.reshape(c6, (c6.size(0), -1)))
 
         return f7
 

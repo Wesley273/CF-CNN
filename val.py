@@ -16,23 +16,33 @@ data_transform = transforms.Compose([
 
 def show_result(model, dataloader):
     with torch.no_grad():
-        for img_3d, img_2d, _ in dataloader:
+        for img_3d, img_2d, mask in dataloader:
             output = model(img_3d, img_2d)
             output = torch.squeeze(output).numpy()
+            mask = torch.squeeze(mask).numpy()
+            plt.subplot(1, 2, 1)
             plt.imshow(output, 'gray')
+            plt.title('Prediction IoU=%.03f' % get_IoU(mask, output, 0.5))
+            plt.subplot(1, 2, 2)
+            plt.title('Ground Truth')
+            plt.imshow(mask, 'gray')
             plt.show()
 
 
-def get_IoU(model, dataloader):
+def get_IoU(x, y, threshold):
+    x = x > threshold
+    y = y > threshold
+    intersection = (x & y).sum()
+    union = (x | y).sum()
+    return (intersection) / union
+
+
+def print_IoU(model, dataloader):
     for img_3d, img_2d, mask in dataloader:
-        mask = torch.squeeze(mask).numpy()
         output = model(img_3d, img_2d)
         output = torch.squeeze(output).detach().numpy()
-        output = output > 0.5
-        mask = mask > 0.5
-        intersection = (output & mask).sum()
-        union = (output | mask).sum()
-        print((intersection) / union)
+        mask = torch.squeeze(mask).numpy()
+        print(get_IoU(mask, output, 0.5))
 
 
 if __name__ == '__main__':
@@ -42,5 +52,5 @@ if __name__ == '__main__':
     GGN_dataset = GGNDataset(r"dataset/val", transform=data_transform)
     dataloader = DataLoader(GGN_dataset)
     model.eval()
+    print_IoU(model, dataloader)
     show_result(model, dataloader)
-    get_IoU(model, dataloader)

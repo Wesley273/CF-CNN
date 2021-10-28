@@ -57,7 +57,7 @@ def show():
         plt.show()
 
 
-def save_pictures():
+def save():
     count_train = 0
     count_val = 0
     for ct_id, x, y, _, _, _, mask_index, z_trans, types in tables.iloc:
@@ -103,4 +103,4 @@ def save_pictures():
 
 
 if __name__ == '__main__':
-    save_pictures()
+    show()
