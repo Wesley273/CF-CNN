@@ -1,5 +1,6 @@
 import os
 
+import cv2
 import nrrd
 import numpy as np
 import pandas as pd
@@ -25,6 +26,14 @@ def crop(array, x, y, scale):
     return array[round(y - bottom):round(y + top), round(x - bottom):round(x + top)]
 
 
+def draw_contour(ct_img, mask):
+    _, mask = cv2.threshold(np.uint8(mask), 0, 255, cv2.THRESH_BINARY)
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    ct_img = cv2.cvtColor(np.uint8(maxmin_normalize(ct_img)*255), cv2.COLOR_GRAY2RGB)
+    ct_img = cv2.drawContours(ct_img, contours, -1, (255, 0, 0), thickness=1)
+    return ct_img
+
+
 def show():
     for ct_id, x, y, _, _, _, mask_index, z_trans, _ in tables.iloc:
         # 读入CT源文件及mask
@@ -39,11 +48,11 @@ def show():
         # 遮罩结果展示
         plt.figure('CT_ID:{} Mask Index: {} Slice:{}'.format(ct_id, mask_index, z_trans))
         plt.subplot(2, 3, 1)
-        plt.imshow(ct_image, "gray")
+        plt.imshow(ct_image, 'gray')
         plt.subplot(2, 3, 2)
-        plt.imshow(1000 * nodule_mask, "gray")
+        plt.imshow(1000 * nodule_mask, 'gray')
         plt.subplot(2, 3, 3)
-        plt.imshow(2000 * nodule_mask + ct_image, "gray")
+        plt.imshow(draw_contour(ct_image, nodule_mask))
 
         # 进行裁切
         mask_crop = crop(nodule_mask, x, y, 35)
@@ -51,9 +60,11 @@ def show():
 
         # 裁切结果展示
         plt.subplot(2, 3, 4)
-        plt.imshow(mask_crop, "gray")
+        plt.imshow(nodule_crop, 'gray')
         plt.subplot(2, 3, 5)
-        plt.imshow(nodule_crop, "gray")
+        plt.imshow(mask_crop, 'gray')
+        plt.subplot(2, 3, 6)
+        plt.imshow(draw_contour(nodule_crop, mask_crop))
         plt.show()
 
 
