@@ -1,3 +1,5 @@
+import copy
+
 import torch
 from torch import optim
 from torch.utils.data import DataLoader
@@ -14,6 +16,16 @@ data_transform = transforms.Compose([
     transforms.Normalize([0.5], [0.5])
 ])
 
+def get_test_loss(model,epoch):
+    # 测试集loss计算
+        test_loss = 0
+        TEST_dataset = GGNDataset(r"dataset/val", transform=data_transform)
+        dataloader_test = DataLoader(TEST_dataset)
+        model.eval()
+        for img_3d, img_2d, mask in dataloader_test:
+            output = model(img_3d.to(device), img_2d.to(device))
+            test_loss += criterion(output, mask.to(device)).item()
+        print("epoch %d test loss:%0.3f" % (epoch, test_loss))
 
 # 训练模型
 def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
@@ -42,16 +54,7 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
             step += 1
             print("%d/%d,train_loss:%0.3f" % (step, dataset_size // dataloader.batch_size, loss.item()))
         print("epoch %d loss:%0.3f" % (epoch, epoch_loss))
-        # 测试集loss计算
-        test_loss = 0
-        TEST_dataset = GGNDataset(r"dataset/val", transform=data_transform)
-        dataloader_test = DataLoader(TEST_dataset)
-        test_model=model
-        test_model.eval()
-        for img_3d, img_2d, mask in dataloader_test:
-            output = test_model(img_3d.to(device), img_2d.to(device))
-            test_loss += criterion(output, mask.to(device)).item()
-        print("epoch %d test loss:%0.3f" % (epoch, test_loss))
+        get_test_loss(copy.deepcopy(model),epoch)
     # 保存模型参数
     torch.save(model.state_dict(), r'weight/weights_%d.pth' % epoch)
     return model
