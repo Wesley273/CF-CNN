@@ -14,16 +14,17 @@ data_transform = transforms.Compose([
     transforms.Normalize([0.5], [0.5])
 ])
 
-
 # 训练模型
-def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
+
+
+def train_model(model, criterion, optimizer, dataloader_test, num_epochs=20):
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
-        dataset_size = len(dataloader.dataset)
+        dataset_size = len(dataloader_test.dataset)
         epoch_loss = 0
         step = 0
-        for img_3d, img_2d, mask in dataloader:
+        for img_3d, img_2d, mask in dataloader_test:
             # 每个bacth都要将梯度(dw,db,...)清零
             optimizer.zero_grad()
             inputs_3d = img_3d.to(device)
@@ -40,8 +41,17 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
             # loss.item()是为了取得一个元素张量的数值
             epoch_loss += loss.item()
             step += 1
-            print("%d/%d,train_loss:%0.3f" % (step, dataset_size // dataloader.batch_size, loss.item()))
+            print("%d/%d,train_loss:%0.3f" % (step, dataset_size // dataloader_test.batch_size, loss.item()))
         print("epoch %d loss:%0.3f" % (epoch, epoch_loss))
+        # 测试集loss计算
+        test_loss = 0
+        TEST_dataset = GGNDataset(r"dataset/val", transform=data_transform)
+        dataloader_test = DataLoader(TEST_dataset)
+        model.eval()
+        for img_3d, img_2d, mask in dataloader_test:
+            output = model(img_3d.to(device), img_2d.to(device))
+            test_loss += criterion(output, mask.to(device)).item()
+        print("epoch %d test loss:%0.3f" % (epoch, test_loss))
     # 保存模型参数
     torch.save(model.state_dict(), r'weight/weights_%d.pth' % epoch)
     return model
