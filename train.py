@@ -15,10 +15,7 @@ data_transform = transforms.Compose([
 ])
 
 
-<<<<<<< HEAD
-=======
 # 训练模型
->>>>>>> parent of eee5fce (update)
 def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
@@ -45,7 +42,6 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
             step += 1
             print("%d/%d,train_loss:%0.3f" % (step, dataset_size // dataloader.batch_size, loss.item()))
         print("epoch %d loss:%0.3f" % (epoch, epoch_loss))
-<<<<<<< HEAD
         # 测试集loss计算
         test_loss = 0
         TEST_dataset = GGNDataset(r"dataset/val", transform=data_transform)
@@ -56,8 +52,6 @@ def train_model(model, criterion, optimizer, dataloader, num_epochs=20):
             output = test_model(img_3d.to(device), img_2d.to(device))
             test_loss += criterion(output, mask.to(device)).item()
         print("epoch %d test loss:%0.3f" % (epoch, test_loss))
-=======
->>>>>>> parent of eee5fce (update)
     # 保存模型参数
     torch.save(model.state_dict(), r'weight/weights_%d.pth' % epoch)
     return model
