@@ -2,7 +2,7 @@
 A implementation of Central Focused Convolutional Neural Networks.
 
 <div style="align: center">
-<img src="http://europepmc.org/wicket/bookmarkable/uk.bl.ukpmc.web.utilities.redirect.RedirectPage?figure=F2/&articles=PMC5661888" width="65%">
+<img src="http://europepmc.org/articles/PMC5661888/bin/nihms914253f2.jpg" width="70%">
 </div>
 
 ## Reference
